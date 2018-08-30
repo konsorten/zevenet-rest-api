@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"net"
-	"net/http"
 	"net/http/fcgi"
 	"os"
 
+	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -14,6 +14,19 @@ const (
 	RestApiSocketPath string = "/usr/local/zevenet/app/cherokee/var/run/rest-api.sock"
 )
 
+// @title Swagger Example API
+// @version 1.0
+// @description This is a sample server Petstore server.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @BasePath /rest-api
 func main() {
 	ret, err := mainInternal()
 	if err != nil {
@@ -29,11 +42,29 @@ func main() {
 
 func mainInternal() (int, error) {
 	// register the handlers
-	handler := http.NewServeMux()
+	handler := gin.New()
 
-	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello World!")
+	handler.Use(func(c *gin.Context) {
+		// inject missing values
+		c.Request.RequestURI = c.Request.URL.String()
+		c.Next()
 	})
+
+	handler.Use(gin.Recovery())
+
+	// register /rest-api/
+	cherokeeRoot := handler.Group("/rest-api")
+
+	cherokeeRoot.GET("/", func(c *gin.Context) {
+		c.Redirect(301, "../swagger/")
+	})
+
+	// register v1 root
+	v1Controller := &ApiControllerV1{
+		handler: cherokeeRoot,
+	}
+
+	v1Controller.Register()
 
 	// start serving the webserver
 	os.Remove(RestApiSocketPath) // try to remove unclean socket

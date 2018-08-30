@@ -8,6 +8,8 @@ if [ -f ./zevenet-rest-api ]; then
     rm -f ./zevenet-rest-api
 fi
 
+~/go/bin/swag init --swagger ./www/swagger/
+
 go build .
 
 if [ ! -x ./zevenet-rest-api ]; then
@@ -16,5 +18,6 @@ if [ ! -x ./zevenet-rest-api ]; then
 fi
 
 # copy files
-sudo cp ./zevenet-rest-api /usr/local/zevenet/bin/zevenet-rest-api
-sudo cp ./cherokee_rest_api.conf /usr/local/zevenet/app/cherokee/etc/cherokee/cherokee_rest_api.conf
+sudo cp -f ./zevenet-rest-api /usr/local/zevenet/bin/zevenet-rest-api
+sudo cp -f -R ./cherokee/* /usr/local/zevenet/app/cherokee/
+sudo cp -f -R ./www/* /usr/local/zevenet/www/
