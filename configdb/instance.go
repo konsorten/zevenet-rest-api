@@ -32,7 +32,7 @@ func CreateConfigDb() error {
 		Tables: map[string]*memdb.TableSchema{},
 	}
 
-	schema.Tables["global"] = getSchemaGlobal()
+	schema.Tables[TableNameGlobal] = getSchemaGlobal()
 
 	db, err := memdb.NewMemDB(schema)
 	if err != nil {

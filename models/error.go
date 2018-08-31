@@ -10,7 +10,7 @@ type ApiError struct {
 	Message    string `json:"message"`
 }
 
-func NewApiError(statusCode int, message string) ApiError {
+func NewApiError(statusCode int, format string, a ...interface{}) ApiError {
 	if statusCode <= 0 {
 		statusCode = 400
 	}
@@ -18,7 +18,7 @@ func NewApiError(statusCode int, message string) ApiError {
 	return ApiError{
 		isError:    true,
 		StatusCode: statusCode,
-		Message:    message,
+		Message:    fmt.Sprintf(format, a...),
 	}
 }
 

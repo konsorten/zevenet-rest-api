@@ -28,7 +28,7 @@ func (db *ConfigDB) watchFileChanges() {
 			t := db.db.Txn(true)
 			defer t.Abort()
 
-			t.DeleteAll("global", "cfgFiles", filename)
+			t.DeleteAll(TableNameGlobal, "cfgFiles", filename)
 
 			t.Commit()
 		}
