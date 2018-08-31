@@ -1,0 +1,8 @@
+package v1
+
+const (
+    mainVersionSimple = "{$.Version$}"
+    mainVersion = "{$.SemVer$}"
+    mainName = "{$.Name$}"
+    mainTitle = "{$.Description$}"
+)

@@ -1,0 +1,24 @@
+package main
+
+// @title {$.Name$}
+// @version {$.Version$}
+// @description {$.Description$}
+
+// @contact.name marvin + konsorten
+// @contact.url http://www.konsorten.de
+// @contact.email open-source@konsorten.de
+
+// @license.name MIT
+// @license.url https://opensource.org/licenses/MIT
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name ZAPI_KEY
+
+// @BasePath /rest-api
+
+const (
+    mainVersion = "{$.SemVer$}"
+    mainName = "{$.Name$}"
+    mainTitle = "{$.Description$}"
+)

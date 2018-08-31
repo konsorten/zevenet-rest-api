@@ -13,21 +13,9 @@ import (
 
 const (
 	RestApiSocketPath string = "/usr/local/zevenet/app/cherokee/var/run/rest-api.sock"
+	LogFilePath       string = "/var/log/rest-api.log"
 )
 
-// @title Swagger Example API
-// @version 1.0
-// @description This is a sample server Petstore server.
-// @termsOfService http://swagger.io/terms/
-
-// @contact.name API Support
-// @contact.url http://www.swagger.io/support
-// @contact.email support@swagger.io
-
-// @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-
-// @BasePath /rest-api
 func main() {
 	ret, err := mainInternal()
 	if err != nil {
@@ -42,6 +30,20 @@ func main() {
 }
 
 func mainInternal() (int, error) {
+	// setup logger
+	logFile, err := os.OpenFile(LogFilePath, os.O_APPEND|os.O_WRONLY, 0644)
+	if err != nil {
+		return 104, fmt.Errorf("Error creating log file %v: %v", LogFilePath, err)
+	}
+
+	defer logFile.Close()
+
+	log.SetOutput(logFile)
+	log.SetLevel(log.DebugLevel)
+
+	// dump info
+	log.Infof("%v - v%v", mainName, mainVersion)
+
 	// register the handlers
 	handler := gin.New()
 
@@ -61,14 +63,14 @@ func mainInternal() (int, error) {
 	})
 
 	// register v1 root
-	v1Controller, err := v1.NewApiController(cherokeeRoot)
+	_, err = v1.NewApiController(cherokeeRoot)
 	if err != nil {
 		return 103, fmt.Errorf("Error creating API controller %v: %v", RestApiSocketPath, err)
 	}
 
-	v1Controller.Register()
-
 	// start serving the webserver
+	log.Infof("Connecting to FCGI socket: %v", RestApiSocketPath)
+
 	os.Remove(RestApiSocketPath) // try to remove unclean socket
 
 	listener, err := net.Listen("unix", RestApiSocketPath)

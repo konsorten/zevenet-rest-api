@@ -1,0 +1,32 @@
+version: 0.1.0
+
+product:
+  name: Zevenet Loadbalancer REST API
+  desc: Extended REST API for Zevenet Loadbalancer Community Edition
+  license: MIT
+
+author:
+  name: marvin + konsorten GmbH
+  email: info@konsorten.de
+  url: http://www.konsorten.de
+
+inputs:
+  - action: npm
+  - action: build-host
+  - action: teamcity
+    name: false
+    build: false
+  - action: git
+  - action: consul-build-id
+    url: https://:5c7e1872-77b1-974a-973c-64a8316f3833@consul.konsorten.net/tpo
+    root: konsorten/build-info/zevenet-rest-api
+  - action: version-info
+  - action: limit-revision
+    length: 7
+
+outputs:
+  - action: template
+    file: version.go.template
+  - action: template
+    file: v1/version.go.template
+  - action: teamcity

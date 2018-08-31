@@ -1,32 +1,41 @@
 package v1
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 )
 
-// ShowBottle godoc
-// @Summary Show a bottle
-// @Description get string by ID
-// @ID get-string-by-int
-// @Tags bottles
-// @Accept  json
-// @Produce  json
-// @Param  id path int true "Bottle ID"
-// @Success 200 {object} string
-// @Failure 400 {object} string
-// @Failure 404 {object} string
-// @Failure 500 {object} string
-// @Router /v1/ [get]
-func (controller *ApiController) GetRoot(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"request": fmt.Sprintf("%+v", c.Request.URL),
-	})
+// SystemVersion contains information about the system version.
+// See https://www.zevenet.com/zapidoc_ce_v3.1/#show-version
+type SystemVersion struct {
+	ApplianceVersion string `json:"appliance_version"`
+	Hostname         string `json:"hostname"`
+	KernelVersion    string `json:"kernel_version"`
+	SystemDate       string `json:"system_date"`
+	ZevenetVersion   string `json:"zevenet_version"`
+	RestApiVersion   string `json:"rest_api_version"`
 }
 
-func (controller *ApiController) Register() {
-	v1 := controller.handler.Group("/v1")
+// GetRoot retrieves basic system information like various version numbers.
+// @Summary Get basic system information.
+// @Description Retrieves basic system information like various version numbers.
+// @ID get-root
+// @Tags System
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} v1.SystemVersion
+// @Failure 400 {object} v1.ApiError
+// @Security ApiKeyAuth
+// @Router /v1/ [get]
+func (controller *ApiController) GetRoot(c *gin.Context) {
+	res, err := controller.callZAPI("GET", "/system/version", nil)
+	if err != nil {
+		c.Error(err)
+		return
+	}
 
-	v1.GET("/", controller.GetRoot)
+	resultBody := res.Content.S("params")
+
+	resultBody.Set(mainVersionSimple, "rest_api_version")
+
+	c.Data(res.HTTPStatus, JsonMimeType, resultBody.Bytes())
 }

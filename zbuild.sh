@@ -8,7 +8,9 @@ if [ -f ./zevenet-rest-api ]; then
     rm -f ./zevenet-rest-api
 fi
 
-~/go/bin/swag init --swagger ./www/swagger/
+~/go/bin/ktn-build-info
+
+~/go/bin/swag init --swagger ./www/swagger/ --generalInfo version.go
 
 rm -f -R ./docs
 
