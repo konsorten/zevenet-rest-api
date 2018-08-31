@@ -9,6 +9,7 @@ import (
 	"net/http/cgi"
 
 	"github.com/Jeffail/gabs"
+	"github.com/konsorten/zevenet-rest-api/globalconfig"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -72,7 +73,7 @@ func (controller *ApiController) callZAPI(method string, path string, input *gab
 	}
 
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("ZAPI_KEY", controller.globalConfig.ZAPIKey)
+	req.Header.Add("ZAPI_KEY", globalconfig.GetZevenetGlobalConfig().ZAPIKey)
 
 	// perform request
 	res := zapiResponseWriter{

@@ -7,6 +7,8 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/konsorten/zevenet-rest-api/configdb"
+	"github.com/konsorten/zevenet-rest-api/globalconfig"
 	"github.com/konsorten/zevenet-rest-api/v1"
 	log "github.com/sirupsen/logrus"
 )
@@ -43,6 +45,17 @@ func mainInternal() (int, error) {
 
 	// dump info
 	log.Infof("%v - v%v", mainName, mainVersion)
+
+	// start-up components
+	err = configdb.CreateConfigDb()
+	if err != nil {
+		return 121, fmt.Errorf("Error creating Config DB: %v", err)
+	}
+
+	err = globalconfig.ReadZevenetGlobalConfig()
+	if err != nil {
+		return 122, fmt.Errorf("Error reading global config: %v", err)
+	}
 
 	// register the handlers
 	handler := gin.New()
