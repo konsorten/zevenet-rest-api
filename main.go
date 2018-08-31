@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/konsorten/zevenet-rest-api/v1"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -60,8 +61,9 @@ func mainInternal() (int, error) {
 	})
 
 	// register v1 root
-	v1Controller := &ApiControllerV1{
-		handler: cherokeeRoot,
+	v1Controller, err := v1.NewApiController(cherokeeRoot)
+	if err != nil {
+		return 103, fmt.Errorf("Error creating API controller %v: %v", RestApiSocketPath, err)
 	}
 
 	v1Controller.Register()

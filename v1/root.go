@@ -1,4 +1,4 @@
-package main
+package v1
 
 import (
 	"fmt"
@@ -19,13 +19,13 @@ import (
 // @Failure 404 {object} string
 // @Failure 500 {object} string
 // @Router /v1/ [get]
-func (controller *ApiControllerV1) GetRoot(c *gin.Context) {
+func (controller *ApiController) GetRoot(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"request": fmt.Sprintf("%+v", c.Request.URL),
 	})
 }
 
-func (controller *ApiControllerV1) Register() {
+func (controller *ApiController) Register() {
 	v1 := controller.handler.Group("/v1")
 
 	v1.GET("/", controller.GetRoot)

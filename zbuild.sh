@@ -10,6 +10,8 @@ fi
 
 ~/go/bin/swag init --swagger ./www/swagger/
 
+rm -f -R ./docs
+
 go build .
 
 if [ ! -x ./zevenet-rest-api ]; then
