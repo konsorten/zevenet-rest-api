@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	log "github.com/sirupsen/logrus"
+	flock "github.com/theckman/go-flock"
 	"gopkg.in/ini.v1"
 )
 
@@ -29,6 +30,17 @@ func GetZevenetGlobalConfig() *ZevenetGlobalConfig {
 func ReadZevenetGlobalConfig() error {
 	log.Debugf("Loading global configuration file: %v", GlobalConfigPath)
 
+	// lock the file
+	fileLock := flock.NewFlock(GlobalConfigPath)
+	locked, err := fileLock.TryRLock()
+	if err != nil {
+		return fmt.Errorf("Failed to lock global config: %v: %v", GlobalConfigPath, err)
+	}
+	if locked {
+		defer fileLock.Unlock()
+	}
+
+	// read file
 	cfg, err := ini.Load(GlobalConfigPath)
 	if err != nil {
 		return fmt.Errorf("Failed to load global config: %v: %v", GlobalConfigPath, err)
