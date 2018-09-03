@@ -39,6 +39,7 @@ func NewApiController(handler *gin.RouterGroup) (*ApiController, error) {
 	v1 := handler.Group("/v1")
 
 	v1.GET("/", controller.GetRoot)
+	v1.GET("/system/version", controller.GetSystemVersion)
 
 	return controller, nil
 }
