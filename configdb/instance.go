@@ -9,11 +9,13 @@ import (
 )
 
 const (
-	ConfigFolderPath string = "/usr/local/zevenet/config"
+	ConfigFolderPath     string = "/usr/local/zevenet/config"
+	ConfigFilesIndexName string = "cfgFiles"
 )
 
 type ConfigDB struct {
 	db          *memdb.MemDB
+	schema      *memdb.DBSchema
 	fileWatcher *gonotify.DirWatcher
 }
 
@@ -48,6 +50,7 @@ func CreateConfigDb() error {
 
 	instance = &ConfigDB{
 		db:          db,
+		schema:      schema,
 		fileWatcher: watcher,
 	}
 

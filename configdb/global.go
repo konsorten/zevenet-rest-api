@@ -25,8 +25,8 @@ func getSchemaGlobal() *memdb.TableSchema {
 				Unique:  true,
 				Indexer: &memdb.StringFieldIndex{Field: "Name"},
 			},
-			"cfgFiles": &memdb.IndexSchema{
-				Name:         "cfgFiles",
+			ConfigFilesIndexName: &memdb.IndexSchema{
+				Name:         ConfigFilesIndexName,
 				Indexer:      &memdb.StringSliceFieldIndex{Field: "ConfigFiles"},
 				AllowMissing: true,
 			},
