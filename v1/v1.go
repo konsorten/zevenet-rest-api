@@ -38,8 +38,9 @@ func NewApiController(handler *gin.RouterGroup) (*ApiController, error) {
 	// register endpoints
 	v1 := handler.Group("/v1")
 
-	v1.GET("/", controller.GetRoot)
+	v1.GET("", controller.GetRoot)
 	v1.GET("/system/version", controller.GetSystemVersion)
+	v1.GET("/farms", controller.GetAllFarms)
 
 	return controller, nil
 }

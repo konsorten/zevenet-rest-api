@@ -7,10 +7,10 @@ import (
 	"github.com/konsorten/zevenet-rest-api/models"
 )
 
-// GetRoot retrieves basic system information like various version numbers.
+// GetSystemVersion retrieves basic system information like various version numbers.
 // @Summary Get basic system information.
 // @Description Retrieves basic system information like various version numbers.
-// @ID get-root
+// @ID get-system-version
 // @Tags System
 // @Accept  json
 // @Produce  json

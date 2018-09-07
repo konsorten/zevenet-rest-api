@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/konsorten/zevenet-rest-api/configdb"
 	"github.com/konsorten/zevenet-rest-api/globalconfig"
+	"github.com/konsorten/zevenet-rest-api/helpers"
 	"github.com/konsorten/zevenet-rest-api/v1"
 	log "github.com/sirupsen/logrus"
 )
@@ -72,7 +73,7 @@ func mainInternal() (int, error) {
 	cherokeeRoot := handler.Group("/rest-api")
 
 	cherokeeRoot.GET("/", func(c *gin.Context) {
-		c.Redirect(301, "../swagger/")
+		c.Redirect(301, helpers.ResolveRelativePath(c, "../swagger/"))
 	})
 
 	// register v1 root
