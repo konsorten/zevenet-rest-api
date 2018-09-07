@@ -8,7 +8,6 @@ import (
 	"github.com/konsorten/zevenet-rest-api/configdb"
 	"github.com/konsorten/zevenet-rest-api/helpers"
 	"github.com/konsorten/zevenet-rest-api/models"
-	"github.com/konsorten/zevenet-rest-api/zapi"
 )
 
 // GetAllFarms retrieves a list of all farms.
@@ -32,7 +31,7 @@ func (controller *ApiController) GetAllFarms(c *gin.Context) {
 	var content *gabs.Container
 
 	if cached == nil {
-		res, err := zapi.Call("GET", "/farms", nil)
+		res, err := controller.zapi.Call("GET", "/farms", nil)
 		if err != nil {
 			c.AbortWithStatusJSON(400, models.NewApiError(400, "Failed to call ZAPI: %v", err))
 			return

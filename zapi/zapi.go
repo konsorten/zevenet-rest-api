@@ -13,14 +13,20 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const (
-	ZapiVersion = "3.1"
-)
-
 type Result struct {
 	HTTPStatus int
 	Content    *gabs.Container
 	ContentRaw []byte
+}
+
+type Host struct {
+	zapiVersion string
+}
+
+func NewHost(zapiVersion string) *Host {
+	return &Host{
+		zapiVersion: zapiVersion,
+	}
 }
 
 type zapiResponseWriter struct {
@@ -47,14 +53,14 @@ func (w zapiResponseWriter) WriteHeader(statusCode int) {
 	w.data.statusCode = statusCode
 }
 
-func Call(method string, path string, input *gabs.Container) (*Result, error) {
+func (host *Host) Call(method string, path string, input *gabs.Container) (*Result, error) {
 	log.Infof("ZAPI call: %v %v", method, path)
 
 	// prepare handler
 	handler := &cgi.Handler{
-		Path:   fmt.Sprintf("/usr/local/zevenet/www/zapi/v%v/zapi.cgi", ZapiVersion),
+		Path:   fmt.Sprintf("/usr/local/zevenet/www/zapi/v%v/zapi.cgi", host.zapiVersion),
 		Dir:    "/usr/local/zevenet/www",
-		Root:   fmt.Sprintf("/zapi/v%v/zapi.cgi", ZapiVersion),
+		Root:   fmt.Sprintf("/zapi/v%v/zapi.cgi", host.zapiVersion),
 		Logger: nlog.New(log.New().Writer(), "zapi.cgi", 0),
 		Stderr: log.New().Writer(),
 	}

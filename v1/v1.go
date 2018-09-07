@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/konsorten/zevenet-rest-api/globalconfig"
 	"github.com/konsorten/zevenet-rest-api/models"
+	"github.com/konsorten/zevenet-rest-api/zapi"
 )
 
 const (
@@ -12,12 +13,14 @@ const (
 
 type ApiController struct {
 	handler *gin.RouterGroup
+	zapi    *zapi.Host
 }
 
 func NewApiController(handler *gin.RouterGroup) (*ApiController, error) {
 	// read the global configuration
 	controller := &ApiController{
 		handler: handler,
+		zapi:    zapi.NewHost("3.1"),
 	}
 
 	// setup authentication

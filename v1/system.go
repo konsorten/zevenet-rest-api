@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/konsorten/zevenet-rest-api/configdb"
 	"github.com/konsorten/zevenet-rest-api/models"
-	"github.com/konsorten/zevenet-rest-api/zapi"
 )
 
 // GetSystemVersion retrieves basic system information like various version numbers.
@@ -29,7 +28,7 @@ func (controller *ApiController) GetSystemVersion(c *gin.Context) {
 	var content *gabs.Container
 
 	if cached == nil {
-		res, err := zapi.Call("GET", "/system/version", nil)
+		res, err := controller.zapi.Call("GET", "/system/version", nil)
 		if err != nil {
 			c.AbortWithStatusJSON(400, models.NewApiError(400, "Failed to call ZAPI: %v", err))
 			return
