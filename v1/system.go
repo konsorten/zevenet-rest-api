@@ -19,6 +19,8 @@ import (
 // @Security ApiKeyAuth
 // @Router /v1/system/version [get]
 func (controller *ApiController) GetSystemVersion(c *gin.Context) {
+	c.Header(SwaggerIDHeader, "get-system-version")
+
 	cached, err := configdb.GetInstance().GetGlobal("/system/version")
 	if err != nil {
 		c.AbortWithStatusJSON(400, models.NewApiError(400, "Failed to retrieve from cache: %v", err))
@@ -42,7 +44,7 @@ func (controller *ApiController) GetSystemVersion(c *gin.Context) {
 			return
 		}
 	} else {
-		content = cached.Object
+		content = cached.Object()
 	}
 
 	resultBody := content.S("params")

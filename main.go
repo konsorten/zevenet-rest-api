@@ -19,6 +19,13 @@ const (
 	LogFilePath       string = "/var/log/rest-api.log"
 )
 
+func recoverPanic() {
+	if rec := recover(); rec != nil {
+		log.Fatalf("FATAL ERROR: %+v", rec)
+		os.Exit(1)
+	}
+}
+
 func main() {
 	ret, err := mainInternal()
 	if err != nil {
@@ -34,7 +41,7 @@ func main() {
 
 func mainInternal() (int, error) {
 	// setup logger
-	logFile, err := os.OpenFile(LogFilePath, os.O_APPEND|os.O_WRONLY, 0644)
+	logFile, err := os.OpenFile(LogFilePath, os.O_APPEND|os.O_WRONLY|os.O_SYNC, 0644)
 	if err != nil {
 		return 104, fmt.Errorf("Error creating log file %v: %v", LogFilePath, err)
 	}
@@ -46,6 +53,8 @@ func mainInternal() (int, error) {
 
 	// dump info
 	log.Infof("%v - v%v", mainName, mainVersion)
+
+	defer recoverPanic()
 
 	// start-up components
 	err = configdb.CreateConfigDb()

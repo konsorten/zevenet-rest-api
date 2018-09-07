@@ -13,7 +13,16 @@ const (
 type GlobalObject struct {
 	Name        string
 	ConfigFiles []string
-	Object      *gabs.Container
+	JSON        []byte
+}
+
+func (obj *GlobalObject) Object() *gabs.Container {
+	r, err := gabs.ParseJSON(obj.JSON)
+	if err != nil {
+		log.Errorf("Failed to re-parse JSON from cache: %v", obj.Name)
+		return gabs.New()
+	}
+	return r
 }
 
 func getSchemaGlobal() *memdb.TableSchema {
@@ -42,7 +51,7 @@ func (db *ConfigDB) AddGlobal(name string, obj *gabs.Container, cfgFiles ...stri
 
 	err := t.Insert(TableNameGlobal, &GlobalObject{
 		Name:        name,
-		Object:      obj,
+		JSON:        obj.Bytes(),
 		ConfigFiles: cfgFiles,
 	})
 	if err != nil {

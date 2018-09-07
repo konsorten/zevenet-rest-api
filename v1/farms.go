@@ -3,9 +3,7 @@ package v1
 import (
 	"fmt"
 
-	"github.com/Jeffail/gabs"
 	"github.com/gin-gonic/gin"
-	"github.com/konsorten/zevenet-rest-api/configdb"
 	"github.com/konsorten/zevenet-rest-api/helpers"
 	"github.com/konsorten/zevenet-rest-api/models"
 )
@@ -22,35 +20,18 @@ import (
 // @Security ApiKeyAuth
 // @Router /v1/farms [get]
 func (controller *ApiController) GetAllFarms(c *gin.Context) {
-	cached, err := configdb.GetInstance().GetGlobal("/farms")
+	resultBody, err := callZAPICached(controller.zapi, "/farms")
 	if err != nil {
-		c.AbortWithStatusJSON(400, models.NewApiError(400, "Failed to retrieve from cache: %v", err))
-		return
-	}
-
-	var content *gabs.Container
-
-	if cached == nil {
-		res, err := controller.zapi.Call("GET", "/farms", nil)
-		if err != nil {
-			c.AbortWithStatusJSON(400, models.NewApiError(400, "Failed to call ZAPI: %v", err))
+		if apiErr, ok := err.(models.ApiError); ok {
+			c.AbortWithStatusJSON(apiErr.StatusCode, apiErr)
+			return
+		} else {
+			c.AbortWithStatusJSON(400, models.NewApiError(400, "Unexpected error: %v", err))
 			return
 		}
-
-		content = res.Content
-
-		err = configdb.GetInstance().AddGlobal("/farms", content)
-		if err != nil {
-			c.AbortWithStatusJSON(400, models.NewApiError(400, "Failed to add to cache: %v", err))
-			return
-		}
-	} else {
-		content = cached.Object
 	}
 
-	resultBody := content.S("params")
-
-	farms, _ := helpers.GetArray(resultBody)
+	farms, _ := resultBody.Children()
 	for _, farm := range farms {
 		farm.Delete("status") // remove uncached value
 		farm.Delete("vport")  // remove profile-specific value

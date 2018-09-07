@@ -8,7 +8,8 @@ import (
 )
 
 const (
-	JsonMimeType = "application/json"
+	JsonMimeType    = "application/json"
+	SwaggerIDHeader = "Swagger-ID"
 )
 
 type ApiController struct {
@@ -44,6 +45,7 @@ func NewApiController(handler *gin.RouterGroup) (*ApiController, error) {
 	v1.GET("", controller.GetRoot)
 	v1.GET("/system/version", controller.GetSystemVersion)
 	v1.GET("/farms", controller.GetAllFarms)
+	NewHTTPFarmApiController(v1.Group("/farms/" + string(models.FarmProfile_HTTP)))
 
 	return controller, nil
 }
