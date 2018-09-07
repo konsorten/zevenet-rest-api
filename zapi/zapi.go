@@ -1,4 +1,4 @@
-package v1
+package zapi
 
 import (
 	"bytes"
@@ -17,7 +17,7 @@ const (
 	ZapiVersion = "3.1"
 )
 
-type ZAPIResult struct {
+type Result struct {
 	HTTPStatus int
 	Content    *gabs.Container
 	ContentRaw []byte
@@ -47,7 +47,7 @@ func (w zapiResponseWriter) WriteHeader(statusCode int) {
 	w.data.statusCode = statusCode
 }
 
-func (controller *ApiController) callZAPI(method string, path string, input *gabs.Container) (*ZAPIResult, error) {
+func Call(method string, path string, input *gabs.Container) (*Result, error) {
 	log.Infof("ZAPI call: %v %v", method, path)
 
 	// prepare handler
@@ -88,7 +88,7 @@ func (controller *ApiController) callZAPI(method string, path string, input *gab
 	output, _ := gabs.ParseJSON(resBodyRaw)
 
 	// handle result
-	return &ZAPIResult{
+	return &Result{
 		HTTPStatus: res.data.statusCode,
 		Content:    output,
 		ContentRaw: resBodyRaw,
