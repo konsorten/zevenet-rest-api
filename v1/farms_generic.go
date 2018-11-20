@@ -12,6 +12,7 @@ import (
 
 type farmSpecificController interface {
 	GetFarmProfile() models.FarmProfile
+	GetConfigFileList(farmName string) []string
 
 	parseVirtualPort(parent *gabs.Container, path string) error
 }

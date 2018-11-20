@@ -41,6 +41,12 @@ func (controller *HTTPFarmApiController) GetFarmProfile() models.FarmProfile {
 	return controller.farmType
 }
 
+func (controller *HTTPFarmApiController) GetConfigFileList(farmName string) []string {
+	return []string{
+		fmt.Sprintf("%v_pound.cfg", farmName),
+	}
+}
+
 func (controller *HTTPFarmApiController) parseVirtualPort(parent *gabs.Container, path string) error {
 	vport := parent.S(path).Data()
 	if s, ok := vport.(string); ok {
